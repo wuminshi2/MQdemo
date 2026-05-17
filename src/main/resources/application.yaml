@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: MQdemo
+  rabbitmq:
+    host: localhost
+    port: 5672
+    virtualHost: testHost
+    username: wuminshi2
+    password: 123

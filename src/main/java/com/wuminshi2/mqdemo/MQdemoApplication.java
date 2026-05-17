@@ -1,0 +1,13 @@
+package com.wuminshi2.mqdemo;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class MQdemoApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(MQdemoApplication.class, args);
+    }
+
+}
