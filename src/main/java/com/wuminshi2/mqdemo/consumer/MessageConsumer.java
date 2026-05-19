@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MessageConsumer {
+    // direct
     @RabbitListener(queues = "order.created.queue1")
     public void directQueue1(String message) {
         System.out.println("directQueue1:" + message);
@@ -20,5 +21,21 @@ public class MessageConsumer {
     ))
     public void directQueue2(String message) {
         System.out.println("directQueue2:" + message);
+    }
+    // fanout
+    @RabbitListener(queues = "notify.email.queue")
+    public void fanoutQueue1(String message) {
+        System.out.println("email consumer 收到:" + message);
+    }
+    @RabbitListener(queues = "notify.sms.queue")
+    public void fanoutQueue2(String message) {
+        System.out.println("sms consumer 收到:" + message);
+    }
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(value = "notify.wechat.queue", durable = "true"),
+            exchange= @Exchange(value = "exchange.fanout", type = ExchangeTypes.FANOUT)
+    ))
+    public void fanoutQueue3(String message) {
+        System.out.println("wechat consumer 收到:" + message);
     }
 }
