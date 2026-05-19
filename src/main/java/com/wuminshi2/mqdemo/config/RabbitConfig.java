@@ -38,5 +38,22 @@ public class RabbitConfig {
     public Binding bindingFanoutQueue2(Queue fanoutQueue2, FanoutExchange fanoutExchange){
         return BindingBuilder.bind(fanoutQueue2).to(fanoutExchange);
     }
-
+    //topic exchange
+    @Bean
+    public TopicExchange topicExchange(){
+        return new TopicExchange("exchange.topic");
+    }
+    @Bean
+    public Queue topicQueue1(){return new Queue("topic.order.queue", true);}
+    @Bean
+    public Queue topicQueue2(){return new Queue("topic.user.queue", true);}
+    @Bean
+    public Binding bindingTopicQueue1(Queue topicQueue1, TopicExchange topicExchange){
+        return BindingBuilder.bind(topicQueue1).to(topicExchange).with("order.*");
+    }
+    @Bean
+    public Binding bindingTopicQueue2(Queue topicQueue2, TopicExchange topicExchange){
+        return BindingBuilder.bind(topicQueue2).to(topicExchange).with("user.*");
+    }
 }
+

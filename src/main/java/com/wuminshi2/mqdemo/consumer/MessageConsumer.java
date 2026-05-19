@@ -38,4 +38,21 @@ public class MessageConsumer {
     public void fanoutQueue3(String message) {
         System.out.println("wechat consumer 收到:" + message);
     }
+    // topic
+    @RabbitListener(queues = "topic.order.queue")
+    public void topicQueue1(String message) {
+        System.out.println("topicQueue1:" + message);
+    }
+    @RabbitListener(queues = "topic.user.queue")
+    public void topicQueue2(String message) {
+        System.out.println("topicQueue2:" + message);
+    }
+    @RabbitListener(bindings = @QueueBinding(
+            value = @Queue(value = "topic.error.queue",durable = "true"),
+            exchange = @Exchange(value = "exchange.topic", type = ExchangeTypes.TOPIC),
+            key = "*.error"
+    ))
+    public void topicQueue3(String message) {
+        System.out.println("topicQueue3:" + message);
+    }
 }
