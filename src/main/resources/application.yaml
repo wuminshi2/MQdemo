@@ -7,3 +7,6 @@ spring:
     virtualHost: testHost
     username: wuminshi2
     password: 123
+    listener:
+      simple:
+        prefetch: 1

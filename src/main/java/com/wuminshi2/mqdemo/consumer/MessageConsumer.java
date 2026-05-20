@@ -1,6 +1,9 @@
 package com.wuminshi2.mqdemo.consumer;
 
+
+import com.rabbitmq.client.Channel;
 import org.springframework.amqp.core.ExchangeTypes;
+import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
 import org.springframework.amqp.rabbit.annotation.QueueBinding;
@@ -54,5 +57,39 @@ public class MessageConsumer {
     ))
     public void topicQueue3(String message) {
         System.out.println("topicQueue3:" + message);
+    }
+    //work
+    @RabbitListener(queues = "work.queue")
+    public void workQueue1(String message){
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("workQueue1:"+message);
+    }
+    @RabbitListener(queues = "work.queue")
+    public void workQueue2(String message){
+        System.out.println("workQueue2:"+message);
+    }
+    //ack
+    @RabbitListener(
+            queues = "ack.queue",
+            containerFactory = "manualAckListenerContainerFactory"
+    )
+    public void ackConsumer(String body, Channel channel, Message message) throws Exception {
+        long deliveryTag = message.getMessageProperties().getDeliveryTag();
+
+        try {
+            System.out.println("收到消息：" + body);
+            if ("fail".equals(body)) {
+                throw new RuntimeException("模拟消费失败");
+            }
+            channel.basicAck(deliveryTag, false);
+            System.out.println("手动 ACK 成功：" + body);
+        } catch (Exception e) {
+            channel.basicNack(deliveryTag, false, true);
+            System.out.println("处理失败，消息重新入队：" + body);
+        }
     }
 }
