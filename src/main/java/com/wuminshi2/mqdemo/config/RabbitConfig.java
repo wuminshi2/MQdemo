@@ -73,5 +73,26 @@ public class RabbitConfig {
         factory.setPrefetchCount(1);
         return factory;
     }
+    //dlq queue
+    @Bean
+    public Queue dlqNormalQueue(){
+        return QueueBuilder.durable("dlq.normal.queue")
+                .deadLetterExchange("dlq.exchange")
+                .deadLetterRoutingKey("dlq.dead")
+                .build();
+    }
+    @Bean
+    public Queue  dlqDeadQueue(){
+        return new Queue("dlq.dead.queue", true);
+    }
+    @Bean
+    public DirectExchange dlqExchange(){
+        return new DirectExchange("dlq.exchange");
+    }
+    @Bean
+    public Binding bindingDeadLetterQueue(Queue dlqDeadQueue, DirectExchange dlqExchange){
+        return BindingBuilder.bind(dlqDeadQueue).to(dlqExchange).with("dlq.dead");
+    }
 }
+
 

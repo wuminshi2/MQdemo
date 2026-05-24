@@ -92,4 +92,24 @@ public class MessageConsumer {
             System.out.println("处理失败，消息重新入队：" + body);
         }
     }
+    //dead letter
+    @RabbitListener(queues = "dlq.normal.queue",containerFactory = "manualAckListenerContainerFactory")
+    public void dlqConsumer(String body,Channel channel, Message message) throws Exception{
+        long deliveryTag = message.getMessageProperties().getDeliveryTag();
+        try {
+            if("success".equals(body)){
+                System.out.println("正常队列收到消息：" + body);
+                channel.basicAck(deliveryTag,false);
+            }else{
+                throw new RuntimeException("模拟消费失败");
+            }
+        } catch (Exception e) {
+            System.out.println("正常队列处理失败，准备进入死信队列：" + body);
+            channel.basicNack(deliveryTag,false,false);
+        }
+    }
+    @RabbitListener(queues = "dlq.dead.queue")
+    public void deadLetterConsumer(String message) {
+        System.out.println("死信队列收到：" + message);
+    }
 }
